@@ -1,0 +1,26 @@
+version: '3'
+services:
+  walletdb:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "wallet_api_dev"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    ports:
+      - "5432:5432"
+
+  wallet_api:
+    image: oselesley/wallet-api:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    environment:
+      PROFILE: dev
+      SERVER_PORT: "8082"
+      DATABASESERVER_PORT: "5432"
+      ENCRYPT_KEY: "IMSYMMETRIC"
+    depends_on:
+      - walletdb
+
