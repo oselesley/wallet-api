@@ -1,0 +1,23 @@
+server:
+  port: 8082
+  servlet:
+    context-path: "/api/v1"
+spring:
+  h2:
+    console:
+      enabled: true
+      path: "/h2"
+  datasource:
+    username: "wallet"
+    password: "wallet"
+    url: "jdbc:h2:mem:walletdb"
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: "/swagger/swagger-ui-custom.html"
