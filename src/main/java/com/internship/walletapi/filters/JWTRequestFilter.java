@@ -41,13 +41,13 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
-
+        log.info("Authorization header" + authorizationHeader);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
+            log.info("in filter, token: " +authorizationHeader);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            log.info("username: " + username);
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 log.info("validated? " + jwtUtil.validateToken(jwt, userDetails));

@@ -14,6 +14,7 @@ import com.internship.walletapi.utils.ResourceHelper;
 import com.internship.walletapi.utils.WalletHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.internship.walletapi.utils.WalletHelper.*;
@@ -30,11 +31,15 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public void signup(SignupRequestDto dto) {
         log.info("in authservice sign up" + dto + "");
         User user = userMapper.map(dto);
         setUserRole(dto.getRole(), roleService, user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.createUser(user);
     }
 

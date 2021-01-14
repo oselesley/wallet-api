@@ -44,9 +44,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
        http
                .csrf().disable()
                .authorizeRequests()
-               .antMatchers("/auth/", "/h2/**", "/").permitAll()
-//
-               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").hasAnyAuthority("noob:write")
+               .antMatchers("/auth/", "/h2/**").permitAll()
+
+               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").hasAnyRole("USER", "ADMIN")
                .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").hasAnyRole("USER", "ADMIN")
                .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").hasRole("ADMIN")
                .anyRequest()
