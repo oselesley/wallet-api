@@ -11,6 +11,24 @@ jobs:
     name: Test - Units & Integrations
     runs-on: ubuntu-18.04
 
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_HOST: "walletdb"
+          POSTGRES_USER: "admin"
+          POSTGRES_PASSWORD: "admin"
+          POSTGRES_DB: "wallet_api_dev"
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 11
@@ -20,11 +38,30 @@ jobs:
       - name: Maven Package
         run: mvn -B clean package -DskipTests
       - name: Maven Verify
-        run: mvn -B clean test # -Pintegration-test
+        run: mvn -B clean verify -Pintegration-test -Dspring.profiles.active=dev
 
   sonar:
     name: Test - SonarCloud Scan
     runs-on: ubuntu-18.04
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_HOST: "walletdb"
+          POSTGRES_USER: "admin"
+          POSTGRES_PASSWORD: "admin"
+          POSTGRES_DB: "wallet_api_dev"
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
 
     steps:
       - uses: actions/checkout@v1
@@ -33,7 +70,7 @@ jobs:
         with:
           java-version: 11.0.4
       - name: SonarCloud Scan
-        run: mvn -B clean package test -Psonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn -B clean verify test -Psonar -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dspring.profiles.active=dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
