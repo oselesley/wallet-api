@@ -7,8 +7,8 @@ services:
       POSTGRES_PASSWORD: "admin"
       POSTGRES_DB: "wallet_api_dev"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
-      - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/2-schema.sql
     ports:
       - "5432:5432"
 

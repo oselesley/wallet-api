@@ -1,0 +1,11 @@
+<profile>
+    <id>sonar</id>
+    <activation>
+        <activeByDefault>true</activeByDefault>
+        <properties>
+            <sonar.login>*your-user-here*</sonar.login>
+            <sonar.password>*your-pwd-here*</sonar.password>
+            <sonar.host.url>*url-of-your-sonar-platform*</sonar.host.url>
+        </properties>
+    </activation>
+    </profile>

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,6 +33,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private RoleService roleService;
+
+    @Override
+    public User fetchUser(String username) {
+        return validateResourceExists(userRepository.findUserByUsernameOrEmail(username), "User Not Found!!");
+    }
 
     @Override
     public void createUser(User user) {
@@ -57,6 +63,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findUserByUsernameOrEmail(email);
+        if (user.isPresent()) {
+            log.info(user.get() + "");
+            user.get().setAccountNonLocked(true);
+        }
         return validateResourceExists(user, "User Not Found!!");
     }
 }

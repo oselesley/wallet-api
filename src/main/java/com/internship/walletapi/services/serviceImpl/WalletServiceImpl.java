@@ -70,9 +70,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void withDraw(Long userId, TransactionRequestDto trd)  {
-        Optional<Money> optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(userId, trd.getCurrency());
-        User user = userService.fetchUser(userId);
+    public void withDraw(User user, TransactionRequestDto trd)  {
+        Optional<Money> optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(user.getId(), trd.getCurrency());
         Money money = null;
         validateCurrencySupported(trd.getCurrency());
         verifyUserCanAccessCurrency(user, trd.getCurrency());
@@ -85,7 +84,7 @@ public class WalletServiceImpl implements WalletService {
         } else {
             if (optionalMoney.isEmpty()) {
                 String mainCurrency = user.getMainCurrency();
-                optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(userId, mainCurrency);
+                optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(user.getId(), mainCurrency);
                 money = validateResourceExists(optionalMoney, "USER has no deposits!!");
 
                 double amountToDeduct = currencyConverter.convert(trd, CURRENCY_CONVERSION_URL, mainCurrency);

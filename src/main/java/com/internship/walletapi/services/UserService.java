@@ -9,5 +9,7 @@ public interface UserService {
 
     User fetchUser(Long userId);
 
+    User fetchUser(String username);
+
     Long updateUserRole(String userRole, Long UserId);
 }

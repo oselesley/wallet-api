@@ -3,23 +3,28 @@ package com.internship.walletapi.models;
 import com.internship.walletapi.enums.UserRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Setter
 @Getter
 @Entity
+@ToString
 @Table(name = "users")
 public class User extends BaseModel implements UserDetails {
     @Email(message = "Must be a valid email!")
     @Column(nullable = false, unique = true, name = "email")
     private String  email;
 
-    @Column(nullable = false, unique = true, name = "user_name")
+    @Column(nullable = false, unique = true, name = "username")
     private String username;
 
     @Column(nullable = false, name = "password")
@@ -28,7 +33,7 @@ public class User extends BaseModel implements UserDetails {
     @Column(nullable = false, name = "firstname")
     private String firstName;
 
-    @Column(nullable = false, name = "last_name")
+    @Column(nullable = false, name = "lastname")
     private String lastName;
 
     @ManyToOne
@@ -42,6 +47,22 @@ public class User extends BaseModel implements UserDetails {
     private boolean credentialsNonExpired;
     private boolean enabled;
 
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    public boolean isEnabled() {
+        return true;
+    }
+
     public User(Long id, String username) {
         this.setId(id);
         this.username = username;
@@ -52,6 +73,6 @@ public class User extends BaseModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRole.getAuthorities();
+        return userRole.getRole().getGrantedAuthorities();
     }
 }

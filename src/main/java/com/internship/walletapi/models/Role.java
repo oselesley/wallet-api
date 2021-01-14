@@ -19,7 +19,4 @@ import java.util.Set;
 public class Role extends BaseModel{
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
-    @JsonIgnore
-    @ElementCollection(fetch = FetchType.LAZY)
-    private Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 }

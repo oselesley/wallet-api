@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public interface WalletService {
     void deposit(TransactionRequestDto trd, User user);
 
-    void withDraw(Long userId, TransactionRequestDto trd);
+    void withDraw(User user, TransactionRequestDto trd);
 
     SupportedCurrenciesResponseDto getSupportedCurrencies ();
 

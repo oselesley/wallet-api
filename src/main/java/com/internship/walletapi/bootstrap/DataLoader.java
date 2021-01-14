@@ -33,15 +33,12 @@ public class DataLoader {
        try {
            Role role = new Role();
            role.setRole(ADMIN);
-           role.setAuthorities(ADMIN.getGrantedAuthorities());
 
            Role role2 = new Role();
            role2.setRole(ELITE);
-           role2.setAuthorities(ELITE.getGrantedAuthorities());
 
            Role role3 = new Role();
            role3.setRole(NOOB);
-           role3.setAuthorities(NOOB.getGrantedAuthorities());
 
            roleService.createRole(role);
            roleService.createRole(role2);
