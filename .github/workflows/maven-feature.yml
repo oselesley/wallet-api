@@ -38,8 +38,7 @@ jobs:
       - name: Maven Package
         run: mvn -B clean package -DskipTests
       - name: Maven Verify
-        run: mvn -B clean verify -Pintegration-test -Dspring.profiles.active=dev \
-            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/wallet_api_dev -Dspring.datasource.username=admin -Dspring.datasource.password=admin \
+        run: mvn -B clean verify -Pintegration-test
 
   sonar:
     name: Test - SonarCloud Scan
@@ -71,8 +70,7 @@ jobs:
         with:
           java-version: 11.0.4
       - name: SonarCloud Scan
-        run: mvn -B clean verify test -Psonar -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dspring.profiles.active=dev \
-          -Dspring.datasource.url=jdbc:postgresql://localhost:5432/wallet_api_dev -Dspring.datasource.username=admin -Dspring.datasource.password=admin \
+        run: mvn -B clean verify test -Psonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
