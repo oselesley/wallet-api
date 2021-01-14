@@ -10,6 +10,7 @@ import com.internship.walletapi.utils.ApiResponseBuilder;
 import com.internship.walletapi.utils.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ import static com.internship.walletapi.utils.ApiResponseBuilder.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
+@Order(6)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

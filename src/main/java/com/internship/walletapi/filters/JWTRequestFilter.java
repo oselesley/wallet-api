@@ -30,9 +30,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private  AuthenticationManager authenticationManager;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
