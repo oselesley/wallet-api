@@ -36,6 +36,11 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         log.info("in doFilterInternal");
         final String authorizationHeader = req.getHeader("Authorization");
 
+        if (req.getRequestURI().contains("/auth") || req.getRequestURI().contains("/swagger")) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         String username = null;
         String jwt = null;
         log.info("Authorization header" + authorizationHeader);
