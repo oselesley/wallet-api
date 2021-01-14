@@ -5,8 +5,8 @@ server:
 spring:
   datasource:
     url: "jdbc:postgresql://localhost:5432/wallet_api_db"
-    password: "jefferey12"
-    username: "postgres"
+    password: "admin"
+    username: "admin"
     driver-class-name: "org.postgresql.Driver"
     platform: "postgres"
   jpa:
