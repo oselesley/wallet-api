@@ -17,6 +17,7 @@ jobs:
         # Docker Hub image
         image: postgres
         # Provide the password for postgres
+        ports: "5432:5432"
         env:
           POSTGRES_HOST: "localhost"
           POSTGRES_USER: "admin"
@@ -50,6 +51,7 @@ jobs:
         # Docker Hub image
         image: postgres
         # Provide the password for postgres
+        ports: "5432:5432"
         env:
           POSTGRES_HOST: "localhost"
           POSTGRES_USER: "admin"
