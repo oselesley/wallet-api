@@ -7,5 +7,15 @@ import lombok.Setter;
 @Setter
 public class MoneyResponseDto {
     private String currency;
-    private String amount;
+    private double amount;
+
+    public MoneyResponseDto withCurrency(String currency) {
+        this.currency = currency;
+        return this;
+    }
+
+    public MoneyResponseDto withAmount(double amount) {
+        this.amount = amount;
+        return this;
+    }
 }
