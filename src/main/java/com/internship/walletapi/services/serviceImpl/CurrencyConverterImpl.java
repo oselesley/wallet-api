@@ -44,8 +44,8 @@ public class CurrencyConverterImpl implements CurrencyConverter {
     }
 
     @Override
-    public double convert(TransactionRequestDto trd, String url, String currency) {
-        MoneyConverterResponseDto moneyConverterResponseDto = ratesProviderService.getRates(trd, url, currency, MoneyConverterResponseDto.class);
+    public double convert(String transactionCurrency, double amount, String url, String currency) {
+        MoneyConverterResponseDto moneyConverterResponseDto = ratesProviderService.getRates(transactionCurrency, url, currency, MoneyConverterResponseDto.class);
 
         if (Objects.isNull(moneyConverterResponseDto) ||
                 !moneyConverterResponseDto.isSuccess() ||
@@ -58,7 +58,7 @@ public class CurrencyConverterImpl implements CurrencyConverter {
                 .stream()
                 .map(Double::valueOf).collect(Collectors.toList());
         log.info(totalRates + " " + moneyConverterResponseDto.getRates().values());
-        return trd.getAmount() *  ( totalRates.get(0)/ totalRates.get(1));
+        return amount *  ( totalRates.get(0)/ totalRates.get(1));
     }
 
     private <T> T getRates(TransactionRequestDto trd, String url, String currency, Class<T> t) {

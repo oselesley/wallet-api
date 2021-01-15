@@ -4,11 +4,13 @@ import com.internship.walletapi.models.Role;
 import com.internship.walletapi.repositories.RoleRepository;
 import com.internship.walletapi.services.RoleService;
 import com.internship.walletapi.utils.ResourceHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.internship.walletapi.utils.ResourceHelper.*;
 
+@Slf4j
 @Service
 public class RoleServiceImpl implements RoleService {
     @Autowired
@@ -27,6 +29,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void createRole(Role role) {
+        log.info("saving role!!");
         roleRepository.save(role);
+        log.info("done saving role");
     }
 }

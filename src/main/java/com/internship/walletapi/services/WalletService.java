@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface WalletService {
-    void deposit(TransactionRequestDto trd, User user);
+    void deposit(TransactionRequestDto trd, User user, boolean admin);
 
     void withDraw(User user, TransactionRequestDto trd);
 
@@ -16,5 +16,5 @@ public interface WalletService {
 
     void validateCurrencySupported(String currency);
 
-    BalanceCheckResponseDto checkBalance ();
+    BalanceCheckResponseDto checkBalance (Long userId);
 }

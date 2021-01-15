@@ -1,5 +1,6 @@
 package com.internship.walletapi.services.serviceImpl;
 
+import com.internship.walletapi.dtos.BalanceCheckResponseDto;
 import com.internship.walletapi.exceptions.GenericWalletException;
 import com.internship.walletapi.exceptions.InsufficientFundsException;
 import com.internship.walletapi.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.internship.walletapi.models.Money;
 import com.internship.walletapi.models.Transaction;
 import com.internship.walletapi.repositories.MoneyRepository;
 import com.internship.walletapi.repositories.TransactionRepository;
+import com.internship.walletapi.services.MoneyService;
 import com.internship.walletapi.services.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +32,12 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private TransactionToMoneyMapper transactionToMoneyMapper;
+    private MoneyService moneyService;
 
-    @Autowired
-    private MoneyRepository moneyRepository;
+    @Override
+    public void addTransaction(Transaction transaction) {
+        saveResource(transaction, transactionRepository);
+    }
 
     @Override
     public List<Transaction> viewPending(int pageNo, int pageSize) {
@@ -50,23 +54,15 @@ public class TransactionServiceImpl implements TransactionService {
             throw new GenericWalletException("Transaction already approved!", BAD_REQUEST);
 
         verifyUserCanAccessCurrency(pendingDeposit.getUser(), pendingDeposit.getCurrency());
-        Optional<Money> optionalMoney =
-                moneyRepository.getMoneyByUserIdAndCurrency(pendingDeposit.getUser().getId(), pendingDeposit.getCurrency());
-        Money money = null;
-        try {
-            money = validateResourceExists(optionalMoney, "");
-            if (money.getAmount() < pendingDeposit.getAmount()) {
-                pendingDeposit.setStatus(DECLINED);
-                transactionRepository.save(pendingDeposit);
-                throw new InsufficientFundsException("you don not have enough funds to process this request!!", NOT_ACCEPTABLE);
-            }
-            money.setAmount(money.getAmount() + pendingDeposit.getAmount());
-        } catch (ResourceNotFoundException e) {
-            log.info("" + e);
-            money = transactionToMoneyMapper.map(pendingDeposit);
+
+        String result = moneyService.addOrDeposit(pendingDeposit);
+        if (result.equalsIgnoreCase("declined")) {
+            pendingDeposit.setStatus(DECLINED);
+            transactionRepository.save(pendingDeposit);
+            throw new InsufficientFundsException("you don not have enough funds to process this request!!", NOT_ACCEPTABLE);
+        } else {
+            pendingDeposit.setStatus(APPROVED);
+            transactionRepository.save(pendingDeposit);
         }
-        pendingDeposit.setStatus(APPROVED);
-        transactionRepository.save(pendingDeposit);
-        saveResource(money, moneyRepository);
     }
 }

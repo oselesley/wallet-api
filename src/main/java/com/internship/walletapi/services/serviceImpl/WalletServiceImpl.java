@@ -7,6 +7,7 @@ import com.internship.walletapi.enums.TransactionType;
 import com.internship.walletapi.exceptions.CurrencyRequestException;
 import com.internship.walletapi.exceptions.InsufficientFundsException;
 import com.internship.walletapi.exceptions.InvalidCurrencyFormatException;
+import com.internship.walletapi.exceptions.ResourceNotFoundException;
 import com.internship.walletapi.mappers.TransactionRequestDtoToTransactionMapper;
 import com.internship.walletapi.mappers.TransactionToMoneyMapper;
 import com.internship.walletapi.mappers.SupportedCurrenciesMapper;
@@ -15,15 +16,17 @@ import com.internship.walletapi.models.Money;
 import com.internship.walletapi.models.User;
 import com.internship.walletapi.repositories.TransactionRepository;
 import com.internship.walletapi.repositories.MoneyRepository;
-import com.internship.walletapi.services.CurrencyConverter;
-import com.internship.walletapi.services.UserService;
-import com.internship.walletapi.services.WalletService;
+import com.internship.walletapi.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static com.internship.walletapi.enums.TransactionStatus.*;
 import static com.internship.walletapi.enums.TransactionType.*;
@@ -37,12 +40,6 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 @Service
 public class WalletServiceImpl implements WalletService {
-    @Autowired
-    private MoneyRepository moneyRepository;
-
-    @Autowired
-    private TransactionRepository dtr;
-
     @Autowired
     private UserService userService;
 
@@ -58,42 +55,53 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     private TransactionRequestDtoToTransactionMapper transactionMapper;
 
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private MoneyService moneyService;
+
+
     private SupportedCurrenciesRequestDto supportedCurrenciesRequestDto;
 
     private String CURRENCY_CONVERSION_URL = "http://data.fixer.io/api/latest";
 
-    public void deposit(TransactionRequestDto trd, User user) {
+    @Transactional
+    public void deposit(TransactionRequestDto trd, User user, boolean admin) {
         validateCurrencySupported(trd.getCurrency());
         verifyUserCanAccessCurrency(user, trd.getCurrency());
         Transaction depositTransaction = mapTransactionRequestDTOtoTransaction(trd, DEPOSIT, PENDING, user);
-        saveResource(depositTransaction, dtr);
+        transactionService.addTransaction(depositTransaction);
+        if (admin) {
+            moneyService.addOrDeposit(depositTransaction);
+        }
     }
 
     @Override
     public void withDraw(User user, TransactionRequestDto trd)  {
-        Optional<Money> optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(user.getId(), trd.getCurrency());
         Money money = null;
+        String mainCurrency = user.getMainCurrency();
         validateCurrencySupported(trd.getCurrency());
         verifyUserCanAccessCurrency(user, trd.getCurrency());
 
         Transaction withdrawalTransaction = mapTransactionRequestDTOtoTransaction(trd, WITHDRAWALS, APPROVED, user);
 
         if (user.getUserRole().getRole() == NOOB) {
-            money = validateResourceExists(optionalMoney, "user has no deposits yet!");
+            money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), user.getMainCurrency());
             deduct(money, trd.getAmount());
         } else {
-            if (optionalMoney.isEmpty()) {
-                String mainCurrency = user.getMainCurrency();
-                optionalMoney = moneyRepository.getMoneyByUserIdAndCurrency(user.getId(), mainCurrency);
-                money = validateResourceExists(optionalMoney, "USER has no deposits!!");
+                try {
+                    money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), trd.getCurrency());
+                } catch (ResourceNotFoundException e) {
+                    money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), mainCurrency);
+                }
 
-                double amountToDeduct = currencyConverter.convert(trd, CURRENCY_CONVERSION_URL, mainCurrency);
-                deduct(money, amountToDeduct);
-            }
+            double amountToDeduct = currencyConverter.convert(trd.getCurrency(), trd.getAmount(), CURRENCY_CONVERSION_URL, mainCurrency);
+            deduct(money, amountToDeduct);
         }
 
-        saveResource(withdrawalTransaction, dtr);
-        moneyRepository.save(money);
+        transactionService.addTransaction(withdrawalTransaction);
+        moneyService.saveMoney(money);
     }
 
     private void deduct (Money money, double withdrawAmount) {
@@ -141,8 +149,24 @@ public class WalletServiceImpl implements WalletService {
         return supportedCurrenciesRequestDto;
     }
 
+    // TODO: Refactor currency conversion logic for performance
     @Override
-    public BalanceCheckResponseDto checkBalance() {
-        return null;
+    public BalanceCheckResponseDto checkBalance(Long userId) {
+        BalanceCheckResponseDto balanceCheckResponseDto = new BalanceCheckResponseDto();
+        AtomicReference<Double> total = new AtomicReference<>(0.0);
+
+        User user = userService.fetchUser(userId);
+        List<Money> monies =  moneyService.getMoneyByUserId(userId);
+        List<MoneyResponseDto> moneyResponseDtos = monies.stream().map(money -> {
+            total.updateAndGet(v -> (v + currencyConverter.convert(money.getCurrency(), money.getAmount(), CURRENCY_CONVERSION_URL, user.getMainCurrency())));
+            return new MoneyResponseDto().withAmount(money.getAmount()).withCurrency(money.getCurrency());
+        }).collect(Collectors.toList());
+
+        return new BalanceCheckResponseDto().withMessage("you have a total of " +
+                user.getMainCurrency() + total + "in your wallet")
+                .withMainCurrency(user.getMainCurrency())
+                .withTotalBalance(total.get())
+                .withMonies(moneyResponseDtos);
+
     }
 }
