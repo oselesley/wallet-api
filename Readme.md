@@ -1,4 +1,4 @@
-# WALLET API ![Build%20and%20Test](https://github.com/oselesley/wallet-api/workflows/Build%20and%20Test/badge.svg)
+# WALLET API ![Build and Test](https://github.com/oselesley/wallet-api/workflows/Build%20and%20Test/badge.svg)
  An Api that allows users save and  money in multiple currencies.
  
  USER ROLES: 
