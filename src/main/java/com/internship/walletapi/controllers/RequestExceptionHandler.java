@@ -41,7 +41,6 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        log.info("inside handle metho arguments not valid!!");
         ApiResponse<Object> ar = new ApiResponse<>(HttpStatus.BAD_REQUEST);
         ar.addValidationError(ex.getBindingResult().getAllErrors());
         ar.setError("Validation Error");

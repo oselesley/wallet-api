@@ -6,12 +6,12 @@ import com.internship.walletapi.dtos.SignupRequestDto;
 import com.internship.walletapi.payload.ApiResponse;
 import com.internship.walletapi.services.AuthService;
 import com.internship.walletapi.services.UserService;
-import com.internship.walletapi.utils.ApiResponseBuilder;
 import com.internship.walletapi.utils.JWTUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -65,14 +65,5 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(dto.getUsernameOrEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         return buildResponseEntity(new ApiResponse<>("user signed in sucessfully", OK, new AuthResponseDto(jwt)));
-    }
-
-    @ResponseStatus(CREATED)
-    @GetMapping("/upgrade/{roleType}/{userId}")
-    private ResponseEntity<ApiResponse<String>> upgradeUserRole (
-            @PathVariable String roleType,
-            @PathVariable Long userId) {
-        userService.updateUserRole(roleType, userId);
-        return buildResponseEntity(new ApiResponse<>("user role upgraded successfully!", CREATED));
     }
 }
