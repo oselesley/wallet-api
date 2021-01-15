@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface RatesProviderService {
-    <T> T getRates(TransactionRequestDto trd, String url, String currency, Class<T> t);
+    <T> T getRates(String transactionCurrency, String url, String currency, Class<T> t);
 }
