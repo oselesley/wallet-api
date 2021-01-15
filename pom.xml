@@ -14,20 +14,10 @@
     <name>wallet-api</name>
     <description>Wallet api project</description>
 
+
     <profiles>
         <profile>
-            <id>sonar</id>
-            <properties>
-                <sonar.sources>.</sonar.sources>
-                <sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
-                <sonar.exclusions>${code.coverage.exclusions}</sonar.exclusions>
-                <sonar.projectKey>oselesley_wallet-api</sonar.projectKey>
-                <sonar.organization>oselesley</sonar.organization>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-            </properties>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
+            <id>skip-spotify</id>
             <build>
                 <plugins>
                     <plugin>
@@ -56,6 +46,24 @@
                             </dependency>
                         </dependencies>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.sources>.</sonar.sources>
+                <sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
+                <sonar.exclusions>${code.coverage.exclusions}</sonar.exclusions>
+                <sonar.projectKey>oselesley_wallet-api</sonar.projectKey>
+                <sonar.organization>oselesley</sonar.organization>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>

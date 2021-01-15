@@ -1,4 +1,4 @@
-# WALLET API [![Build Status](https://ci-next.docker.com/public/buildStatus/icon?job=compose/master)](https://ci-next.docker.com/public/job/compose/job/master/)
+# WALLET API [![Actions Status](https://github.com/oselesley/wallet-api/workflows/Build%20and%20Test/badge.svg)](https://github.com/oselesley/wallet-api/actions)
  An Api that allows users save and  money in multiple currencies.
  
  USER ROLES: 

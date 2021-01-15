@@ -90,7 +90,7 @@ jobs:
         with:
           java-version: 11.0.4
       - name: Publish artifact on GitHub Packages
-        run: mvn -B clean deploy -DskipTests
+        run: mvn -B clean deploy -Pskip-spotify -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
