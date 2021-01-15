@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 
 import java.util.Arrays;
 
 @Aspect
+//@Component
 public class LoggingAspect {
     @Autowired
     private Environment env;
@@ -33,13 +35,13 @@ public class LoggingAspect {
 
     }
 
-    @Before(value = "springBeanPointcut() || applicationPointCut()")
+    @Before(value = "springBeanPointcut() && applicationPointCut()")
     public void loggerMethods(JoinPoint joinPoint) {
         Logger logger = logger(joinPoint);
        logger.info("Entering method: with arguments {} {}: " + Arrays.toString(joinPoint.getArgs()));
     }
 
-    @Around(value = "springBeanPointcut() || applicationPointCut()")
+    @Around(value = "springBeanPointcut() && applicationPointCut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = logger(joinPoint);
         if (log.isDebugEnabled()) {

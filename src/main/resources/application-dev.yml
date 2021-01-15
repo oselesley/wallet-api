@@ -1,13 +1,13 @@
 server:
-  port: 8082
+  port: 8083
   servlet:
     context-path: "/api/v1"
 
 spring:
   datasource:
-    url: "jdbc:postgresql://walletdb:5432/wallet_api_dev"
-    password: "admin"
-    username: "admin"
+    url: "jdbc:postgresql://${HOST:localhost}:5432/wallet_api_dev"
+    password: "${POSTGRES_PASS:admin}"
+    username: "${POSTGRES_USER:admin}"
     driver-class-name: "org.postgresql.Driver"
     platform: "postgres"
   jpa:

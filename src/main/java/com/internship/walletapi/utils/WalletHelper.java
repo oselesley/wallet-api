@@ -7,6 +7,7 @@ import com.internship.walletapi.models.Role;
 import com.internship.walletapi.models.User;
 import com.internship.walletapi.services.RoleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import static com.internship.walletapi.enums.UserRole.*;
 import static org.springframework.http.HttpStatus.*;
@@ -36,5 +37,13 @@ public class WalletHelper {
             default:
                 throw new GenericWalletException(role + " is not a valid role!!", BAD_REQUEST);
         }
+    }
+
+    public static void validateUserAccess(User user, String... roles){
+        for (int i = 0; i < roles.length; i++) {
+            if(roles[i].equalsIgnoreCase(user.getUserRole().getName())) return;
+        }
+
+        throw new GenericWalletException("role " + user.getUserRole().getName() + " is unathorized for this route", METHOD_NOT_ALLOWED);
     }
 }

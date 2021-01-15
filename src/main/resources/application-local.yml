@@ -1,0 +1,21 @@
+server:
+  port: 8082
+  servlet:
+    context-path: "/api/v1"
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/wallet_api_db"
+    password: "${POSTGRES_PASS}"
+    username: "${POSTGRES_USER}"
+    driver-class-name: "org.postgresql.Driver"
+    platform: "postgres"
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: "/swagger/swagger-ui-custom.html"

@@ -1,6 +1,11 @@
 package com.internship.walletapi.config;
 
 import com.internship.walletapi.utils.JWTDataSource;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+
+import java.util.Arrays;
 
 
 @Slf4j
@@ -34,5 +41,16 @@ public class WalletConfig {
         jwtDataSource.setExpirationDate(expirationDate);
 
         return jwtDataSource;
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .components(new Components().addSecuritySchemes("bearer-jwt",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+                                .in(SecurityScheme.In.HEADER).name("Authorization")))
+                .info(new Info().title("WALLET API").version("1.0.0"))
+                .addSecurityItem(
+                        new SecurityRequirement().addList("Authorization", Arrays.asList("read", "write")));
     }
 }

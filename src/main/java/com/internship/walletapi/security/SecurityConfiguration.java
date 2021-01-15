@@ -43,25 +43,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http
-               .csrf().disable()
+       http.cors().disable().csrf().disable()
                .authorizeRequests()
                .antMatchers("/auth/", "/h2/**").permitAll()
-
-               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").hasAnyRole("USER", "ADMIN")
-               .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").hasAnyRole("USER", "ADMIN")
-               .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").hasRole("ADMIN")
+               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").access("hasAnyRole('NOOB', 'ELITE')")
+               .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").access("hasAnyRole('NOOB', 'ELITE')")
+               .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").access("hasRole('ADMIN')")
+               .antMatchers(HttpMethod.GET, "/api/v1/admin/**").access("hasRole('ADMIN')")
+               .antMatchers(HttpMethod.POST, "/api/v1/admin/**").access("hasRole('ADMIN')")
                .anyRequest()
-               .authenticated();
-
-       http
-               .csrf()
-               .disable();
-       http
+               .authenticated()
+               .and()
                .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-       http
-               .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+               .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
@@ -79,9 +75,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService);
+        auth
+                .userDetailsService(userService);
     }
 
 }

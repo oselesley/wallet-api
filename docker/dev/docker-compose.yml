@@ -10,14 +10,14 @@ services:
       - ./data.sql:/docker-entrypoint-initdb.d/1-data.sql
       - ./init.sql:/docker-entrypoint-initdb.d/2-init.sql
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   wallet_api:
     image: oselesley/wallet-api:0.0.1-SNAPSHOT
     ports:
-      - "8082:8082"
+      - "8083:8082"
     environment:
-      PROFILE: dev
+      PROFILE: test
       SERVER_PORT: "8082"
       DATABASESERVER_PORT: "5432"
       ENCRYPT_KEY: "IMSYMMETRIC"

@@ -22,7 +22,7 @@ jobs:
         env:
           POSTGRES_HOST: "localhost"
           POSTGRES_USER: "admin"
-          POSTGRES_PASSWORD: "admin"
+          POSTGRES_PASSWORD: "01234Admin"
           POSTGRES_DB: "wallet_api_dev"
         # Set health checks to wait until postgres has started
         options: >-
@@ -57,7 +57,7 @@ jobs:
         env:
           POSTGRES_HOST: "localhost"
           POSTGRES_USER: "admin"
-          POSTGRES_PASSWORD: "admin"
+          POSTGRES_PASSWORD: "01234Admin"
           POSTGRES_DB: "wallet_api_dev"
         # Set health checks to wait until postgres has started
         options: >-

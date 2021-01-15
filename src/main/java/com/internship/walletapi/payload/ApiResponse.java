@@ -81,6 +81,9 @@ public class ApiResponse<T> {
     }
 
     public void addValidationError(List<ObjectError> globalErrors) {
-        globalErrors.forEach(this::addValidationError);
+        globalErrors.forEach(error -> {
+            FieldError error1 = (FieldError) error;
+            addValidationError(error1.getObjectName(), error1.getField(), error1.getRejectedValue(), error1.getDefaultMessage());
+        });
     }
 }

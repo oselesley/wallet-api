@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 public class Role extends BaseModel{
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    private String name;
     @Enumerated(value = EnumType.STRING)
     private UserRole role;
 }

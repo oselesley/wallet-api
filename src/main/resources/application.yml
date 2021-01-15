@@ -4,11 +4,10 @@ server:
     context-path: "/api/v1"
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/wallet_api_dev"
-    password: "admin"
-    username: "admin"
-    driver-class-name: "org.postgresql.Driver"
-    platform: "postgres"
+    url: "jdbc:h2:mem:walletdb"
+    password: "wallet"
+    username: "wallet"
+    driver-class-name: "org.h2.Driver"
   jpa:
     hibernate:
       ddl-auto: create
