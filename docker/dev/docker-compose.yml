@@ -17,7 +17,9 @@ services:
     ports:
       - "8083:8082"
     environment:
-      PROFILE: test
+      PROFILE: dev
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
       SERVER_PORT: "8082"
       DATABASESERVER_PORT: "5432"
       ENCRYPT_KEY: "IMSYMMETRIC"

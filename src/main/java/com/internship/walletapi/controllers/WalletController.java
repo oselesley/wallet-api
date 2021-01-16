@@ -58,7 +58,7 @@ public class WalletController {
     private UserService userService;
 
     @ResponseStatus(CREATED)
-    @PostMapping("/withdraw")
+    @PostMapping("/fund-wallet")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> withdraw (@RequestBody TransactionRequestDto trd)  {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

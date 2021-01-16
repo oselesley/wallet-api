@@ -36,9 +36,9 @@ public class AdminController {
 
 
     @ResponseStatus(CREATED)
-    @GetMapping("/upgradeuser/{userId}")
+    @GetMapping("/promote/{userId}")
     @Operation(security = { @SecurityRequirement(name = "Authorization") })
-    private ResponseEntity<ApiResponse<String>> upgradeUserRole (@PathVariable Long userId) {
+    private ResponseEntity<ApiResponse<String>> promoteUser (@PathVariable Long userId) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
@@ -48,9 +48,9 @@ public class AdminController {
     }
 
     @ResponseStatus(CREATED)
-    @GetMapping("/downgradeuser/{userId}")
+    @GetMapping("/demote/{userId}")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
-    private ResponseEntity<ApiResponse<String>> downgradeUserRole (@PathVariable Long userId) {
+    private ResponseEntity<ApiResponse<String>> demoteUser (@PathVariable Long userId) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");

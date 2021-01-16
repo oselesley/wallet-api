@@ -44,7 +44,7 @@ public class TransactionController {
 
 
     @ResponseStatus(CREATED)
-    @GetMapping("/approve/{transactionId}")
+    @GetMapping("{transactionId}/approve/")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     private ResponseEntity<ApiResponse<String>> approve (@PathVariable Long transactionId) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -57,7 +57,7 @@ public class TransactionController {
     @ResponseStatus(CREATED)
     @GetMapping("/getAll/{pageNo}/{pageLength}")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
-    private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllTransactions (
+    private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllPendingTransactions (
                                                       @PathVariable int pageNo,
                                                       @PathVariable int pageLength) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

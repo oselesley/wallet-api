@@ -2,7 +2,6 @@ package com.internship.walletapi.security;
 
 
 import com.internship.walletapi.filters.JWTRequestFilter;
-import com.internship.walletapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +9,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,21 +41,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http.cors().disable().csrf().disable()
+       http
+               .cors().disable().csrf().disable()
                .authorizeRequests()
                .antMatchers("/auth/", "/h2/**").permitAll()
-               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").access("hasAnyRole('NOOB', 'ELITE')")
-               .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").access("hasAnyRole('NOOB', 'ELITE')")
-               .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").access("hasRole('ADMIN')")
-               .antMatchers(HttpMethod.GET, "/api/v1/admin/**").access("hasRole('ADMIN')")
-               .antMatchers(HttpMethod.POST, "/api/v1/admin/**").access("hasRole('ADMIN')")
+               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").hasAnyAuthority("noob:write", "noob:read",  "elite:write", "elite:read")
+               .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").hasAnyAuthority("noob:write", "noob:read",  "elite:write", "elite:read")
+               .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").hasAnyAuthority("admin:write", "admin:read")
+               .antMatchers(HttpMethod.GET, "/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
+               .antMatchers(HttpMethod.POST, "/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
                .anyRequest()
-               .authenticated()
+               .fullyAuthenticated()
                .and()
                .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-               .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+               .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
