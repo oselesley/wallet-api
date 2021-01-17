@@ -35,20 +35,20 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         log.info("in doFilterInternal");
         final String authorizationHeader = req.getHeader("Authorization");
+        String uri = req.getRequestURL().toString();
 
-//        if (req.getRequestURI().contains("/auth") || req.getRequestURI().contains("/v3")) {
-//            filterChain.doFilter(req, res);
-//            return;
+//        if (uri.contains("/swagger") || uri.contains("/auth")) {
+//            req.getRequestDispatcher(req.getServletPath()).forward(req, res);
+//            log.info("forwarding response");
 //        }
-
         String username = null;
         String jwt = null;
-        log.info(req.getRequestURL().toString());
-        log.info("Authorization header" + authorizationHeader);
+        log.info(uri);
+        log.info("Authorization header: " + authorizationHeader);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
-            log.info("in filter, token: " +authorizationHeader);
+            log.info("in filter, token: " + authorizationHeader);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -62,6 +62,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+
+        log.info("leaving do filter internal");
         filterChain.doFilter(req, res);
     }
 }
