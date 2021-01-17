@@ -15,7 +15,7 @@ services:
   wallet_api:
     image: oselesley/wallet-api:0.0.1-SNAPSHOT
     ports:
-      - "8083:8082"
+      - "8082:8082"
     environment:
       PROFILE: dev
       POSTGRES_USER: "admin"

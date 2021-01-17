@@ -9,7 +9,7 @@ test:
 
 
 compose-build:
-	docker system prune -a --volumes
+	#docker system prune -a --volumes
 	mvn clean install
 	docker-compose -f docker/dev/docker-compose.yml up
 

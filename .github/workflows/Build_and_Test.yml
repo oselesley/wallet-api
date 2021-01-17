@@ -120,32 +120,32 @@ jobs:
     name: Build and push to Heroku
     needs: [artifact, docker]
     runs-on: ubuntu-latest
-    steps:
-      - name: Update Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#        run: sudo apt update && sudo apt install heroku
-        run: curl https://cli-assets.heroku.com/install.sh | sh
-      - uses: actions/checkout@v1
-      - name: Login to Heroku Container registry
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
-      - name: Build and push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
-      - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
 #    steps:
-#      - name: Login to Heroku Container registry
+#      - name: Update Heroku
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+##        run: sudo apt update && sudo apt install heroku
+#        run: curl https://cli-assets.heroku.com/install.sh | sh
 #      - uses: actions/checkout@v1
-#      - uses: akhileshns/heroku-deploy@v3.8.9 # This is the action
-#      with:
-#        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-#        heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-#        heroku_email: ${{secrets.EMAIL}}
-#        healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
-#        usedocker: true
+#      - name: Login to Heroku Container registry
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:login
+#      - name: Build and push
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
+#      - name: Release
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
+    steps:
+      - name: Login to Heroku Container registry
+      - uses: actions/checkout@v1
+      - uses: akhileshns/heroku-deploy@v3.8.9 # This is the action
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+        heroku_email: ${{secrets.EMAIL}}
+        healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+        usedocker: true
