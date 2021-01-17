@@ -121,8 +121,8 @@ jobs:
     needs: [artifact, docker]
     runs-on: ubuntu-latest
     steps:
-      - name: Login to Heroku Container registry
       - uses: actions/checkout@v1
+      - name: Login to Heroku Container registry
       - uses: akhileshns/heroku-deploy@v3.8.9
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
