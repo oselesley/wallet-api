@@ -36,8 +36,8 @@ public class User extends BaseModel implements UserDetails {
     @Column(nullable = false, name = "lastname")
     private String lastName;
 
-    @ManyToOne
-    private Role userRole;
+    @Enumerated(value = EnumType.STRING)
+    private UserRole userRole;
 
     @Column(nullable = false, name = "main_currency")
     private String mainCurrency;
@@ -73,6 +73,6 @@ public class User extends BaseModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRole.getRole().getGrantedAuthorities();
+        return userRole.getGrantedAuthorities();
     }
 }

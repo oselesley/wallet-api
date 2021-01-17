@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class WalletHelper {
     public static void verifyUserCanAccessCurrency (User user, String currency) {
-        if (user.getUserRole().getRole() == NOOB && !user.getMainCurrency().equalsIgnoreCase(currency))
+        if (user.getUserRole() == NOOB && !user.getMainCurrency().equalsIgnoreCase(currency))
             throw new CurrencyNotAuthorizedException("NOOB user cannot access currency", NOT_ACCEPTABLE);
     }
 
@@ -24,15 +24,15 @@ public class WalletHelper {
         switch (role.toLowerCase()) {
             case "noob":
                 Role userRole = roleService.fetchRole(3L);
-                user.setUserRole(userRole);
+                user.setUserRole(NOOB);
                 break;
             case "elite":
                 userRole = roleService.fetchRole(2L);
-                user.setUserRole(userRole);
+                user.setUserRole(ELITE);
                 break;
             case "admin":
                 userRole = roleService.fetchRole(1L);
-                user.setUserRole(userRole);
+                user.setUserRole(ADMIN);
                 break;
             default:
                 throw new GenericWalletException(role + " is not a valid role!!", BAD_REQUEST);
@@ -41,9 +41,9 @@ public class WalletHelper {
 
     public static void validateUserAccess(User user, String... roles){
         for (int i = 0; i < roles.length; i++) {
-            if(roles[i].equalsIgnoreCase(user.getUserRole().getName())) return;
+            if(roles[i].equalsIgnoreCase(user.getUserRole().name())) return;
         }
 
-        throw new GenericWalletException("role " + user.getUserRole().getName() + " is unathorized for this route", METHOD_NOT_ALLOWED);
+        throw new GenericWalletException("role " + user.getUserRole().name() + " is unathorized for this route", METHOD_NOT_ALLOWED);
     }
 }

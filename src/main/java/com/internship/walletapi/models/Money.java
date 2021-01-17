@@ -2,6 +2,7 @@ package com.internship.walletapi.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 @Setter
 @Entity(name = "monies")
 @Table(name = "monies")
+@ToString
 public class Money extends BaseModel{
     @ManyToOne
     private User user;

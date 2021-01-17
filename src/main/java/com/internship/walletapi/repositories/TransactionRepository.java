@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query(value = "SELECT * FROM transactions t WHERE t.status = :status", nativeQuery = true)
+    @Query(value = "SELECT * FROM transactions t WHERE t.transaction_status = :status", nativeQuery = true)
     Page<Transaction> findAllTransactionsByStatus(@Param("status") String status, Pageable pageable);
 }

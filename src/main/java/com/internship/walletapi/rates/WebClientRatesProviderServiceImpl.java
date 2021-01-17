@@ -16,6 +16,8 @@ public class WebClientRatesProviderServiceImpl implements RatesProviderService {
     private Environment env;
     @Override
     public <T> T getRates(String transactionCurrency, String url, String currency, Class<T> t) {
+        log.info("inside getRates, about to make call to fixer");
+        log.info(transactionCurrency);
         WebClient webClient = WebClient.create(url);
         T s = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("")

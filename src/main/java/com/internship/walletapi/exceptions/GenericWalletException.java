@@ -14,9 +14,4 @@ public class GenericWalletException extends RuntimeException implements WalletEx
         this.message = message;
         this.status = status;
     }
-
-    @Override
-    public HttpStatus getStatus() {
-        return null;
-    }
 }

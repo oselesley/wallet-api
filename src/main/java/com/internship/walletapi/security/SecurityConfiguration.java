@@ -41,29 +41,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http
-               .cors().disable().csrf().disable()
-               .authorizeRequests()
-               .antMatchers("/auth/", "/h2/**").permitAll()
-               .antMatchers(HttpMethod.POST, "/api/v1/wallets/**").hasAnyAuthority("noob:write", "noob:read",  "elite:write", "elite:read")
-               .antMatchers(HttpMethod.GET,"/api/v1/wallets/**").hasAnyAuthority("noob:write", "noob:read",  "elite:write", "elite:read")
-               .antMatchers(HttpMethod.GET, "/api/v1/transactions/approve/**").hasAnyAuthority("admin:write", "admin:read")
-               .antMatchers(HttpMethod.GET, "/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
-               .antMatchers(HttpMethod.POST, "/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
+//        http.authorizeRequests().anyRequest().permitAll();
+        http.cors().disable().csrf().disable();
+        http.authorizeRequests()
+               .antMatchers("/auth/**", "/swagger/**", "/v3/api-docs/**").permitAll()
+               .antMatchers("/wallets/**").hasAnyAuthority("noob:write", "noob:read",  "elite:write", "elite:read")
+               .antMatchers( "/api/v1/transactions/approve/**").hasAnyAuthority("admin:write", "admin:read")
+               .antMatchers("/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
+////               .antMatchers("/api/v1/admin/**").hasAnyAuthority("admin:write", "admin:read")
                .anyRequest()
-               .fullyAuthenticated()
-               .and()
-               .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-               .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+               .fullyAuthenticated();
+               http.sessionManagement()
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+               http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/h2/**")
-                .antMatchers("/auth/**")
-        .antMatchers("/swagger/**", "/v3/api-docs/**");
+                .antMatchers("/h2/**", "/auth/**").and().ignoring()
+                .antMatchers("/swagger-ui-custom.html").and().ignoring()
+                .antMatchers("/swagger/**", "/v3/api-docs/**");
     }
 
     @Order(5)
@@ -76,8 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userService);
+        auth.userDetailsService(userService);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.internship.walletapi.bootstrap;
 
+import com.internship.walletapi.enums.UserRole;
 import com.internship.walletapi.models.Role;
 import com.internship.walletapi.models.User;
 import com.internship.walletapi.repositories.RoleRepository;
@@ -58,7 +59,7 @@ public class DataLoader {
            user2.setMainCurrency("NGN");
            user2.setEmail("lesley@gmail.com");
            user2.setUsername("lesliej");
-           user2.setUserRole(role);
+           user2.setUserRole(ADMIN);
            userService.createUser(user2);
        } catch (Exception e) {
            log.info("Data already exists");

@@ -11,11 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface MoneyRepository extends JpaRepository<Money, Long> {
-    @Query(value = "SELECT * FROM monies u WHERE u.id = :userId AND u.currency = :currency", nativeQuery = true)
+    @Query(value = "SELECT * FROM MONIES m WHERE m.user_id = :userId AND m.currency = :currency", nativeQuery = true)
     Optional<Money> getMoneyByUserIdAndCurrency (
             @Param("userId") Long userId,
             @Param("currency") String currency);
 
-    @Query(value = "SELECT * FROM monies u WHERE u.id = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM MONIES m WHERE m.user_id = :userId", nativeQuery = true)
     List<Money> getMoneyByUser (@Param("userId") Long userId);
 }
