@@ -1,6 +1,7 @@
 package com.internship.walletapi.controllers;
 
 import com.internship.walletapi.dtos.TransactionRequestDto;
+import com.internship.walletapi.dtos.TransactionResponseDto;
 import com.internship.walletapi.models.Transaction;
 import com.internship.walletapi.models.User;
 import com.internship.walletapi.payload.ApiResponse;
@@ -58,7 +59,7 @@ public class TransactionController {
     @ResponseStatus(CREATED)
     @GetMapping("/getAllTransactions/{pageNo}/{pageLength}")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
-    private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllTransactions (
+    private ResponseEntity<ApiResponse<List<TransactionResponseDto>>> fetchAllTransactions (
             @PathVariable int pageNo,
             @PathVariable int pageLength) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -66,13 +67,13 @@ public class TransactionController {
         WalletHelper.validateUserAccess(user, "admin");
 
         log.info("fetch all transactions from page number: " + pageNo + " , requests per page: " + pageLength);
-        List<Transaction> transactionList = transactionService.viewAll(pageNo, pageLength);
+        List<TransactionResponseDto> transactionList = transactionService.viewAll(pageNo, pageLength);
         return buildResponseEntity(new ApiResponse<>("succeeded!!", CREATED, transactionList));
     }
     @ResponseStatus(CREATED)
     @GetMapping("/getAllPendingTransactions/{pageNo}/{pageLength}")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
-    private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllPendingTransactions (
+    private ResponseEntity<ApiResponse<List<TransactionResponseDto>>> fetchAllPendingTransactions (
                                                       @PathVariable int pageNo,
                                                       @PathVariable int pageLength) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -80,7 +81,7 @@ public class TransactionController {
         WalletHelper.validateUserAccess(user, "admin");
 
         log.info("fetch all pending requests from page number: " + pageNo + " , requests per page: " + pageLength);
-        List<Transaction> transactionList = transactionService.viewPending(pageNo, pageLength);
+        List<TransactionResponseDto> transactionList = transactionService.viewPending(pageNo, pageLength);
         return buildResponseEntity(new ApiResponse<>("succeeded!!", CREATED, transactionList));
     }
 }
