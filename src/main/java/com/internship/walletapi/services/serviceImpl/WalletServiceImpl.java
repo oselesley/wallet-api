@@ -86,7 +86,7 @@ public class WalletServiceImpl implements WalletService {
 
         Transaction withdrawalTransaction = mapTransactionRequestDTOtoTransaction(trd, WITHDRAWALS, APPROVED, user);
 
-        if (user.getUserRole().getRole() == NOOB) {
+        if (user.getUserRole() == NOOB) {
             money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), user.getMainCurrency());
             deduct(money, trd.getAmount());
         } else {
@@ -152,13 +152,17 @@ public class WalletServiceImpl implements WalletService {
     // TODO: Refactor currency conversion logic for performance
     @Override
     public BalanceCheckResponseDto checkBalance(Long userId) {
-        BalanceCheckResponseDto balanceCheckResponseDto = new BalanceCheckResponseDto();
         AtomicReference<Double> total = new AtomicReference<>(0.0);
-
+        log.info("in balance check method");
         User user = userService.fetchUser(userId);
         List<Money> monies =  moneyService.getMoneyByUserId(userId);
+        log.info("list of user wallets: " + monies);
+
         List<MoneyResponseDto> moneyResponseDtos = monies.stream().map(money -> {
-            total.updateAndGet(v -> (v + currencyConverter.convert(money.getCurrency(), money.getAmount(), CURRENCY_CONVERSION_URL, user.getMainCurrency())));
+            log.info("users money currency(not main): " + money.getCurrency());
+            if (money.getCurrency().equalsIgnoreCase(user.getMainCurrency())) {
+                total.set(total.get() + money.getAmount());
+            } else total.updateAndGet(v -> (v + currencyConverter.convert(money.getCurrency(), money.getAmount(), CURRENCY_CONVERSION_URL, user.getMainCurrency())));
             return new MoneyResponseDto().withAmount(money.getAmount()).withCurrency(money.getCurrency());
         }).collect(Collectors.toList());
 

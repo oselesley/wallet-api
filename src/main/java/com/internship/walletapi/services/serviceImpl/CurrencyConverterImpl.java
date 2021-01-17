@@ -45,6 +45,7 @@ public class CurrencyConverterImpl implements CurrencyConverter {
 
     @Override
     public double convert(String transactionCurrency, double amount, String url, String currency) {
+        log.info("inside currency conveter!!");
         MoneyConverterResponseDto moneyConverterResponseDto = ratesProviderService.getRates(transactionCurrency, url, currency, MoneyConverterResponseDto.class);
 
         if (Objects.isNull(moneyConverterResponseDto) ||
