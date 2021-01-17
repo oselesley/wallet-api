@@ -120,6 +120,16 @@ jobs:
     name: Build and push to Heroku
     needs: [artifact, docker]
     runs-on: ubuntu-latest
+    steps:
+      - name: Login to Heroku Container registry
+      - uses: actions/checkout@v1
+      - uses: akhileshns/heroku-deploy@v3.8.9
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.EMAIL}}
+          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
+          usedocker: true
 #    steps:
 #      - name: Update Heroku
 #        env:
@@ -139,13 +149,4 @@ jobs:
 #        env:
 #          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 #        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
-    steps:
-      - name: Login to Heroku Container registry
-      - uses: actions/checkout@v1
-      - uses: akhileshns/heroku-deploy@v3.8.9 # This is the action
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-        heroku_email: ${{secrets.EMAIL}}
-        healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
-        usedocker: true
+

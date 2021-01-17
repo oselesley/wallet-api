@@ -45,7 +45,7 @@ public class WalletController {
     private WalletService walletService;
 
     @ResponseStatus(CREATED)
-    @PostMapping("/deposit")
+    @PostMapping("/withdraw")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> deposit (@RequestBody TransactionRequestDto trd) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

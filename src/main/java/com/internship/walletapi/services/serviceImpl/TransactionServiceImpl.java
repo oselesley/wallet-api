@@ -1,13 +1,10 @@
 package com.internship.walletapi.services.serviceImpl;
 
-import com.internship.walletapi.dtos.BalanceCheckResponseDto;
+import com.internship.walletapi.dtos.TransactionResponseDto;
 import com.internship.walletapi.exceptions.GenericWalletException;
 import com.internship.walletapi.exceptions.InsufficientFundsException;
-import com.internship.walletapi.exceptions.ResourceNotFoundException;
-import com.internship.walletapi.mappers.TransactionToMoneyMapper;
-import com.internship.walletapi.models.Money;
+import com.internship.walletapi.mappers.TransactionToTransactionResponseDtoMapper;
 import com.internship.walletapi.models.Transaction;
-import com.internship.walletapi.repositories.MoneyRepository;
 import com.internship.walletapi.repositories.TransactionRepository;
 import com.internship.walletapi.services.MoneyService;
 import com.internship.walletapi.services.TransactionService;
@@ -17,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,15 +32,34 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private MoneyService moneyService;
 
+    @Autowired
+    private TransactionToTransactionResponseDtoMapper transactionToTransactionResponseDtoMapper;
+
     @Override
     public void addTransaction(Transaction transaction) {
         saveResource(transaction, transactionRepository);
     }
 
     @Override
-    public List<Transaction> viewPending(int pageNo, int pageSize) {
-        Page<Transaction> pendingDepositsPage = transactionRepository.findAllTransactionsByStatus(PENDING.toString(), PageRequest.of(pageNo, pageSize));
-        return pendingDepositsPage.getContent();
+    public List<TransactionResponseDto> viewPending(int pageNo, int pageSize) {
+        Page<Transaction> pendingDepositsPage = transactionRepository.findAllTransactionsByStatus(PENDING.name(), PageRequest.of(pageNo, pageSize));
+        List<TransactionResponseDto> responseDtos = new ArrayList<>();
+        pendingDepositsPage.getContent().forEach(transaction -> {
+            transactionToTransactionResponseDtoMapper.map(transaction);
+        });
+        return responseDtos;
+    }
+
+    @Override
+    public List<TransactionResponseDto> viewAll(int pageNo, int pageSize) {
+        log.info("fetching transactions");
+        Page<Transaction> pendingDepositsPage = transactionRepository.findAll(PageRequest.of(pageNo, pageSize));
+        log.info("" + pendingDepositsPage.toList());
+        List<TransactionResponseDto> responseDtos = new ArrayList<>();
+        pendingDepositsPage.getContent().forEach(transaction -> {
+            transactionToTransactionResponseDtoMapper.map(transaction);
+        });
+        return responseDtos;
     }
 
     @Override

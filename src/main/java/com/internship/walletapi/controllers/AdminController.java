@@ -37,12 +37,13 @@ public class AdminController {
 
     @ResponseStatus(CREATED)
     @GetMapping("/promote/{userId}")
-    @Operation(security = { @SecurityRequirement(name = "Authorization") })
+    @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     private ResponseEntity<ApiResponse<String>> promoteUser (@PathVariable Long userId) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
+        log.info("in promote user role, promoting user role to: " + "elite");
         userService.updateUserRole("elite", userId);
         return buildResponseEntity(new ApiResponse<>("user role upgraded successfully!", CREATED));
     }
@@ -55,6 +56,7 @@ public class AdminController {
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
+        log.info("in demote user role, demoting user role to: " + "noob");
         userService.updateUserRole("noob", userId);
         return buildResponseEntity(new ApiResponse<>("user role downgraded successfully!", CREATED));
     }
@@ -68,11 +70,13 @@ public class AdminController {
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
-        if (user.getUserRole().compareTo(UserRole.ADMIN) == 0)
+        User userToBeFunded = userService.fetchUser(userId);
+        log.info("user to be funded: " + userToBeFunded);
+        if (userToBeFunded.getUserRole() == UserRole.ADMIN)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
         walletService.deposit(trd, user, true);
-        return buildResponseEntity(new ApiResponse<>("user role upgraded successfully!", CREATED));
+        return buildResponseEntity(new ApiResponse<>("sucessfully deposited for user " + user.getUsername(), CREATED));
     }
 
     @ResponseStatus(CREATED)
@@ -84,10 +88,12 @@ public class AdminController {
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
-        if (user.getUserRole().compareTo(UserRole.ADMIN) == 0)
+        User userToBeFunded = userService.fetchUser(userId);
+        log.info("user to be funded: " + userToBeFunded);
+        if (userToBeFunded.getUserRole() == UserRole.ADMIN)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
         walletService.withDraw(user, trd);
-        return buildResponseEntity(new ApiResponse<>("deposit transaction initiated successfully!", CREATED));
+        return buildResponseEntity(new ApiResponse<>("sucessfully withdrew for user " + user.getUsername(), CREATED));
     }
 }

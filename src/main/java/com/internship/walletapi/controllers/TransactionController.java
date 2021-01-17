@@ -55,9 +55,22 @@ public class TransactionController {
         transactionService.approvePendingDeposit(transactionId);
         return buildResponseEntity(new ApiResponse<>("deposit transaction approved!", CREATED));
     }
-
     @ResponseStatus(CREATED)
-    @GetMapping("/getAll/{pageNo}/{pageLength}")
+    @GetMapping("/getAllTransactions/{pageNo}/{pageLength}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
+    private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllTransactions (
+            @PathVariable int pageNo,
+            @PathVariable int pageLength) {
+        Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.fetchUser(((UserDetails) sco).getUsername());
+        WalletHelper.validateUserAccess(user, "admin");
+
+        log.info("fetch all transactions from page number: " + pageNo + " , requests per page: " + pageLength);
+        List<Transaction> transactionList = transactionService.viewAll(pageNo, pageLength);
+        return buildResponseEntity(new ApiResponse<>("succeeded!!", CREATED, transactionList));
+    }
+    @ResponseStatus(CREATED)
+    @GetMapping("/getAllPendingTransactions/{pageNo}/{pageLength}")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     private ResponseEntity<ApiResponse<List<Transaction>>> fetchAllPendingTransactions (
                                                       @PathVariable int pageNo,
