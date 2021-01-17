@@ -3,6 +3,8 @@ package com.internship.walletapi.controllers;
 import com.internship.walletapi.dtos.BalanceCheckResponseDto;
 import com.internship.walletapi.dtos.TransactionRequestDto;
 import com.internship.walletapi.exceptions.GenericWalletException;
+import com.internship.walletapi.exceptions.ResourceNotFoundException;
+import com.internship.walletapi.exceptions.WalletException;
 import com.internship.walletapi.models.Role;
 import com.internship.walletapi.models.User;
 import com.internship.walletapi.payload.ApiResponse;
@@ -37,7 +39,7 @@ import static org.springframework.http.HttpStatus.*;
 // "%s %s has been successfully deposited", trd.getAmount(), trd.getCurrency()
 @Slf4j
 @RestController
-@RequestMapping("/wallet")
+@RequestMapping("/wallets")
 public class WalletController {
     @Autowired
     private WalletService walletService;
@@ -47,8 +49,13 @@ public class WalletController {
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> deposit (@RequestBody TransactionRequestDto trd) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.fetchUser(((UserDetails) sco).getUsername());
-        WalletHelper.validateUserAccess(user, "elite", "noob");
+        User user = null;
+        try {
+            user = userService.fetchUser(((UserDetails) sco).getUsername());
+            WalletHelper.validateUserAccess(user, "elite", "noob");
+        } catch (ResourceNotFoundException | GenericWalletException e) {
+            return buildResponseEntity(new ApiResponse<>(e.getMessage(), e.getStatus()));
+        }
 
         walletService.deposit(trd, user, false);
         return buildResponseEntity(new ApiResponse<>("deposit transaction initiated successfully!", CREATED));
@@ -62,8 +69,13 @@ public class WalletController {
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> withdraw (@RequestBody TransactionRequestDto trd)  {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.fetchUser(((UserDetails) sco).getUsername());
-        WalletHelper.validateUserAccess(user, "elite", "noob");
+        User user = null;
+        try {
+            user = userService.fetchUser(((UserDetails) sco).getUsername());
+            WalletHelper.validateUserAccess(user, "elite", "noob");
+        } catch (ResourceNotFoundException | GenericWalletException e) {
+            return buildResponseEntity(new ApiResponse<>(e.getMessage(), e.getStatus()));
+        }
 
         walletService.withDraw(user, trd);
         return buildResponseEntity(new ApiResponse<>("withdraw transaction completed!", CREATED));
@@ -74,10 +86,15 @@ public class WalletController {
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<BalanceCheckResponseDto>> checkBalance ()  {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.fetchUser(((UserDetails) sco).getUsername());
-        WalletHelper.validateUserAccess(user, "elite", "noob");
+        User user = null;
+        try {
+            user = userService.fetchUser(((UserDetails) sco).getUsername());
+            WalletHelper.validateUserAccess(user, "elite", "noob");
+        } catch (ResourceNotFoundException | GenericWalletException e) {
+            return buildResponseEntity(new ApiResponse<>(e.getMessage(), e.getStatus()));
+        }
 
-        BalanceCheckResponseDto balance = walletService.checkBalance( user.getId());
-        return buildResponseEntity(new ApiResponse<>("withdraw transaction completed!", CREATED, balance));
+        BalanceCheckResponseDto balance = walletService.checkBalance(user.getId());
+        return buildResponseEntity(new ApiResponse<>("success", CREATED, balance));
     }
 }

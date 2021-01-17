@@ -50,6 +50,8 @@ public class TransactionController {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
+
+
         transactionService.approvePendingDeposit(transactionId);
         return buildResponseEntity(new ApiResponse<>("deposit transaction approved!", CREATED));
     }

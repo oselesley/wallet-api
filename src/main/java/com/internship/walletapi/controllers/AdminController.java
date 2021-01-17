@@ -68,7 +68,7 @@ public class AdminController {
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
-        if (user.getUserRole().getRole().compareTo(UserRole.ADMIN) == 0)
+        if (user.getUserRole().compareTo(UserRole.ADMIN) == 0)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
         walletService.deposit(trd, user, true);
@@ -84,7 +84,7 @@ public class AdminController {
         User user = userService.fetchUser(((UserDetails) sco).getUsername());
         WalletHelper.validateUserAccess(user, "admin");
 
-        if (user.getUserRole().getRole().compareTo(UserRole.ADMIN) == 0)
+        if (user.getUserRole().compareTo(UserRole.ADMIN) == 0)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
         walletService.withDraw(user, trd);
