@@ -116,17 +116,4 @@ jobs:
       - name: Publish Docker image
         run: docker push $REPO
 
-  heroku:
-    name: Build and push to Heroku
-    needs: [artifact, docker]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.8.9
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-          heroku_email: ${{secrets.EMAIL}}
-          healthcheck: "https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/health"
-          usedocker: true
 
