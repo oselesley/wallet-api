@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface MoneyService {
-    String addOrDeposit(Transaction transaction);
+    String withdrawOrDeposit(Transaction transaction);
 
     Money getMoneyByUserIdAndCurrency(Long userId, String currency);
 

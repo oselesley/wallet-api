@@ -45,7 +45,7 @@ public class WalletController {
     private WalletService walletService;
 
     @ResponseStatus(CREATED)
-    @PostMapping("/withdraw")
+    @PostMapping("/fund-wallet")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> deposit (@RequestBody TransactionRequestDto trd) {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -65,7 +65,7 @@ public class WalletController {
     private UserService userService;
 
     @ResponseStatus(CREATED)
-    @PostMapping("/fund-wallet")
+    @PostMapping("/withdraw")
     @Operation(security = { @SecurityRequirement(name = "bearer-jwt") })
     public ResponseEntity<ApiResponse<String>> withdraw (@RequestBody TransactionRequestDto trd)  {
         Object sco = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

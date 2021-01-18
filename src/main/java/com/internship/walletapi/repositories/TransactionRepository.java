@@ -1,5 +1,6 @@
 package com.internship.walletapi.repositories;
 
+import com.internship.walletapi.enums.TransactionStatus;
 import com.internship.walletapi.models.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,5 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query(value = "SELECT * FROM TRANSACTIONS t WHERE t.transaction_status = :status", nativeQuery = true)
-    Page<Transaction> findAllTransactionsByStatus(@Param("status") String status, Pageable pageable);
+    Page<Transaction> findAllTransactionsByStatus(TransactionStatus status, Pageable pageable);
 }

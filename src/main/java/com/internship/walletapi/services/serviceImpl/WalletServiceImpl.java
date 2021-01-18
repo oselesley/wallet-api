@@ -14,8 +14,6 @@ import com.internship.walletapi.mappers.SupportedCurrenciesMapper;
 import com.internship.walletapi.models.Transaction;
 import com.internship.walletapi.models.Money;
 import com.internship.walletapi.models.User;
-import com.internship.walletapi.repositories.TransactionRepository;
-import com.internship.walletapi.repositories.MoneyRepository;
 import com.internship.walletapi.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +22,12 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.internship.walletapi.enums.TransactionStatus.*;
 import static com.internship.walletapi.enums.TransactionType.*;
 import static com.internship.walletapi.enums.UserRole.*;
-import static com.internship.walletapi.utils.ResourceHelper.*;
 
 import static com.internship.walletapi.utils.WalletHelper.*;
 import static org.springframework.http.HttpStatus.*;
@@ -68,12 +64,16 @@ public class WalletServiceImpl implements WalletService {
 
     @Transactional
     public void deposit(TransactionRequestDto trd, User user, boolean admin) {
+        log.info("depositing money: by admin: " + admin);
         validateCurrencySupported(trd.getCurrency());
         verifyUserCanAccessCurrency(user, trd.getCurrency());
         Transaction depositTransaction = mapTransactionRequestDTOtoTransaction(trd, DEPOSIT, PENDING, user);
         transactionService.addTransaction(depositTransaction);
+
+        log.info("deposit tx: " + depositTransaction);
         if (admin) {
-            moneyService.addOrDeposit(depositTransaction);
+            log.info("Admin depositing..: ");
+            moneyService.withdrawOrDeposit(depositTransaction);
         }
     }
 
@@ -90,13 +90,17 @@ public class WalletServiceImpl implements WalletService {
             money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), user.getMainCurrency());
             deduct(money, trd.getAmount());
         } else {
+            double amountToDeduct = 0;
+            if (mainCurrency.equals(trd.getCurrency())) amountToDeduct = trd.getAmount();
+            else {
                 try {
                     money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), trd.getCurrency());
                 } catch (ResourceNotFoundException e) {
                     money = moneyService.getMoneyByUserIdAndCurrency(user.getId(), mainCurrency);
                 }
-
-            double amountToDeduct = currencyConverter.convert(trd.getCurrency(), trd.getAmount(), CURRENCY_CONVERSION_URL, mainCurrency);
+                amountToDeduct = currencyConverter.convert(trd.getCurrency(), trd.getAmount(), CURRENCY_CONVERSION_URL, mainCurrency);
+            }
+            assert money != null;
             deduct(money, amountToDeduct);
         }
 

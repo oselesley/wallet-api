@@ -75,7 +75,7 @@ public class AdminController {
         if (userToBeFunded.getUserRole() == UserRole.ADMIN)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
-        walletService.deposit(trd, user, true);
+        walletService.deposit(trd, userToBeFunded, true);
         return buildResponseEntity(new ApiResponse<>("sucessfully deposited for user " + user.getUsername(), CREATED));
     }
 
@@ -93,7 +93,7 @@ public class AdminController {
         if (userToBeFunded.getUserRole() == UserRole.ADMIN)
             throw new GenericWalletException("admin cannot have wallets", METHOD_NOT_ALLOWED);
 
-        walletService.withDraw(user, trd);
+        walletService.withDraw(userToBeFunded, trd);
         return buildResponseEntity(new ApiResponse<>("sucessfully withdrew for user " + user.getUsername(), CREATED));
     }
 }

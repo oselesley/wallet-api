@@ -42,10 +42,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionResponseDto> viewPending(int pageNo, int pageSize) {
-        Page<Transaction> pendingDepositsPage = transactionRepository.findAllTransactionsByStatus(PENDING.name(), PageRequest.of(pageNo, pageSize));
+        Page<Transaction> pendingDepositsPage = transactionRepository.findAllTransactionsByStatus(PENDING, PageRequest.of(pageNo, pageSize));
         List<TransactionResponseDto> responseDtos = new ArrayList<>();
         pendingDepositsPage.getContent().forEach(transaction -> {
-            transactionToTransactionResponseDtoMapper.map(transaction);
+            log.info("mapping transaction: " + transaction);
+            responseDtos.add(transactionToTransactionResponseDtoMapper.map(transaction));
         });
         return responseDtos;
     }
@@ -57,14 +58,17 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("" + pendingDepositsPage.toList());
         List<TransactionResponseDto> responseDtos = new ArrayList<>();
         pendingDepositsPage.getContent().forEach(transaction -> {
-            transactionToTransactionResponseDtoMapper.map(transaction);
+            log.info("mapping transaction: " + transaction);
+            responseDtos.add(transactionToTransactionResponseDtoMapper.map(transaction));
         });
         return responseDtos;
     }
 
     @Override
     public void approvePendingDeposit(Long pendingDepositId) {
+        log.info("approving!!");
         Optional<Transaction> optionalPendingDeposit = transactionRepository.findById(pendingDepositId);
+
         Transaction pendingDeposit = validateResourceExists(optionalPendingDeposit,
                 "No Such Transaction!");
         if (pendingDeposit.getStatus() == APPROVED)
@@ -72,11 +76,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         verifyUserCanAccessCurrency(pendingDeposit.getUser(), pendingDeposit.getCurrency());
 
-        String result = moneyService.addOrDeposit(pendingDeposit);
+        String result = moneyService.withdrawOrDeposit(pendingDeposit);
         if (result.equalsIgnoreCase("declined")) {
             pendingDeposit.setStatus(DECLINED);
             transactionRepository.save(pendingDeposit);
-            throw new InsufficientFundsException("you don not have enough funds to process this request!!", NOT_ACCEPTABLE);
+            throw new InsufficientFundsException("you do not have enough funds to process this request!!", NOT_ACCEPTABLE);
         } else {
             pendingDeposit.setStatus(APPROVED);
             transactionRepository.save(pendingDeposit);

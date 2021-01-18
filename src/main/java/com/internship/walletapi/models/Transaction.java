@@ -4,6 +4,7 @@ import com.internship.walletapi.enums.TransactionStatus;
 import com.internship.walletapi.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "transactions")
+@ToString
 public class Transaction extends BaseModel {
     @ManyToOne
     private User user;

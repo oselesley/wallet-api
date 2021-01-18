@@ -5,10 +5,12 @@ import com.internship.walletapi.enums.TransactionType;
 import com.internship.walletapi.models.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Getter
 @Setter
+@ToString
 public class TransactionResponseDto {
     private Long userId;
 

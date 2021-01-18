@@ -24,6 +24,10 @@
    then run
    
      docker-compose -f docker/dev/docker-compose.yml up
+     
+   Swagger Route
+   
+     http://localhost:8082/api/v1/swagger/swagger-ui-custom.html
     
     
  
