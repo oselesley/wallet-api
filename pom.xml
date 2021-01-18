@@ -199,38 +199,6 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>1.4.3</version>-->
-<!--                <configuration>-->
-<!--                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>-->
-<!--                    <repository>oselesley/${project.artifactId}</repository>-->
-<!--                    <tag>${project.version}</tag>-->
-<!--                    <buildArgs>-->
-<!--                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>-->
-<!--                    </buildArgs>-->
-<!--&lt;!&ndash;                    <username>${DOCKER_USER}</username>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <password>${DOCKER_PASS}</password>&ndash;&gt;-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <phase>install</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>javax.activation</groupId>-->
-<!--                        <artifactId>javax.activation-api</artifactId>-->
-<!--                        <version>1.2.0</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
